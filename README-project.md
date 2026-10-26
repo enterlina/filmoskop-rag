@@ -2,6 +2,8 @@
 
 **Repository:** [github.com/enterlina/filmoskop-rag](https://github.com/enterlina/filmoskop-rag)
 
+**Reports:** [English (default)](filmoskop_rag_portfolio_en.ipynb) · [Русский](filmoskop_rag_project.ipynb)
+
 An end-to-end Russian-language RAG prototype for a fictional streaming-service
 support knowledge base. The project covers data cleaning, mojibake repair,
 paragraph-aware chunking, dense retrieval, cross-encoder reranking, grounded
