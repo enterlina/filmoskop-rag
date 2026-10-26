@@ -13,13 +13,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "filmoskop_rag_project.ipynb"
-TARGET = ROOT / "filmoskop_rag_portfolio_en.ipynb"
+TARGET = ROOT / "filmoskop_rag_project_en.ipynb"
 
 MARKDOWN = {
     0: """# FilmScope Streaming Support RAG Assistant
 
 **Language:** English (default) · [Русская версия](filmoskop_rag_project.ipynb)  
 **Repository:** [github.com/enterlina/filmoskop-rag](https://github.com/enterlina/filmoskop-rag)
+
+## Portfolio summary
+
+This project delivers a reproducible, evaluated RAG assistant rather than a
+single retrieval demo. The v3 iteration removed 21 archive pages, 13 service
+documents, and seven content duplicates without losing any gold-relevant
+document. Routed BM25+dense retrieval followed by cross-encoder reranking
+reached **recall@5 = 0.9464** and **MRR = 0.8296**. Exact-query recall@5 reached
+1.00, semantic 0.96, and multi-document 0.875. GPT-OSS 20B was selected over
+Nemotron in the generator A/B test. All expensive stages use atomic,
+version-aware checkpoints, and API credentials are never written to disk.
 
 ## Project brief
 

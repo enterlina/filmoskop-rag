@@ -3,7 +3,7 @@
 An evaluated Russian-language support RAG system built as an AI Engineering
 portfolio project.
 
-**Default report:** [English version](filmoskop_rag_portfolio_en.ipynb)  
+**Default report:** [English version](filmoskop_rag_project_en.ipynb)  
 **Also available:** [Русская версия](filmoskop_rag_project.ipynb)
 
 The final v3 pipeline performs corpus cleaning, paragraph-aware chunking,
@@ -24,8 +24,8 @@ content-level near-duplicates without removing any gold-relevant document.
 
 ## Project files
 
-- [`filmoskop_rag_portfolio_en.ipynb`](filmoskop_rag_portfolio_en.ipynb) —
-  default English portfolio report;
+- [`filmoskop_rag_project_en.ipynb`](filmoskop_rag_project_en.ipynb) —
+  complete English report and implementation (default);
 - [`filmoskop_rag_project.ipynb`](filmoskop_rag_project.ipynb) — complete
   Russian report and implementation;
 - [`README-project.md`](README-project.md) — detailed setup and engineering

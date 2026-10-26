@@ -2,7 +2,7 @@
 
 **Repository:** [github.com/enterlina/filmoskop-rag](https://github.com/enterlina/filmoskop-rag)
 
-**Reports:** [English (default)](filmoskop_rag_portfolio_en.ipynb) · [Русский](filmoskop_rag_project.ipynb)
+**Reports:** [English (default)](filmoskop_rag_project_en.ipynb) · [Русский](filmoskop_rag_project.ipynb)
 
 An end-to-end Russian-language RAG prototype for a fictional streaming-service
 support knowledge base. The project covers data cleaning, mojibake repair,
@@ -34,8 +34,8 @@ rather than production-path components.
 
 - `filmoskop_rag_project.ipynb` — full Russian-language implementation and
   experiments.
-- `filmoskop_rag_portfolio_en.ipynb` — concise English portfolio narrative,
-  comparisons, engineering decisions, and final configuration.
+- `filmoskop_rag_project_en.ipynb` — complete English translation with the same
+  code, saved outputs, comparisons, and final configuration.
 
 ## Setup
 
