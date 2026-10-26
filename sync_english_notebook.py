@@ -193,12 +193,176 @@ should still be recalibrated on a dedicated validation split before production.
 }
 
 
+def stream(text: str) -> list[dict]:
+    """Create a compact, GitHub-renderable saved notebook output."""
+    return [{"name": "stdout", "output_type": "stream", "text": text.splitlines(keepends=True)}]
+
+
+EXCLUDED_DOCUMENTS = """\
+ doc_id | translated title                                             | reason    | duplicate_of
+--------+--------------------------------------------------------------+-----------+-------------
+     10 | TV sign-in with a code (archive)                            | archive   |
+     17 | Internet speed for streaming (archive)                      | archive   |
+     25 | FilmScope plans (archive)                                   | archive   |
+     27 | Watch Party (archive)                                       | archive   |
+     28 | 5.1 surround sound (archive)                                | archive   |
+     33 | Linked devices (archive)                                    | archive   |
+     36 | Error-request handling procedure                            | service   |
+     45 | 4K playback requirements (archive)                          | archive   |
+     52 | Help section (archive)                                      | archive   |
+     53 | Section moved                                               | service   |
+     58 | Content-team meeting minutes                               | service   |
+     65 | Player error codes (archive, old numbering)                 | archive   |
+     67 | Downloading films and series (archive)                      | archive   |
+     68 | Subscription cancellation and refunds (archive)            | archive   |
+     70 | Error P-102 (archive)                                       | archive   |
+     71 | Article being updated                                       | service   |
+     74 | Section under development                                   | service   |
+     75 | player-api configuration                                    | service   |
+     80 | Profile export (internal)                                   | service   |
+     84 | PIN code (archive)                                          | archive   |
+     88 | Changing plans (archive)                                    | archive   |
+     92 | Trial period (archive)                                      | archive   |
+    100 | Help-content publishing procedure, appendix 2               | service   |
+    114 | Subscription auto-renewal (archive)                         | archive   |
+    123 | Account profiles (archive)                                  | archive   |
+    126 | Layout validation                                           | service   |
+    136 | Film rental (archive)                                       | archive   |
+    142 | Vacancy: video quality engineer                             | service   |
+    143 | Billing-request response template                           | service   |
+    149 | Payment methods (archive)                                   | archive   |
+    156 | Section diagram (image)                                     | service   |
+    164 | Annual subscription (archive)                               | archive   |
+    169 | Password recovery (archive)                                 | archive   |
+    170 | Draft: choosing the right plan                              | service   |
+    105 | Film and series search                                      | duplicate | 158
+     86 | Supported devices                                           | duplicate | 146
+     83 | How to register                                             | duplicate | 151
+     77 | Watching phone content on a large screen                    | duplicate | 175
+     23 | Error P-107 in a browser                                    | duplicate | 160
+      7 | Deleting an account                                         | duplicate | 121
+      0 | Promo codes                                                 | duplicate | 95
+"""
+
+
+ENGLISH_OUTPUTS = {
+    1: """Documents: 181 | questions: 66
+Question types: semantic 25, multi 16, exact 15, gap 10
+Checkpoint directory: filmoskop_checkpoints
+""",
+    3: f"""Markup detected: 49 before cleaning -> 0 after cleaning
+Mojibake detected: 16 before cleaning -> 0 after cleaning
+Removed: 21 archive | 13 service | 7 content duplicates | 140 documents retained
+
+{EXCLUDED_DOCUMENTS}
+BEFORE: Account security: general advice — several habits protect an account better than any setting...
+AFTER:  Account security: general advice — several habits protect an account better than any setting...
+""",
+    6: """Whole-document chunks: 140 | paragraph-aware chunks: 159
+
+strategy          chunks  median_chars  max_chars
+whole document       140         747.5       2109
+paragraph-aware      159         716.0       1223
+""",
+    7: """Embedding model loaded: intfloat/multilingual-e5-base
+Embeddings loaded from the versioned checkpoint.
+""",
+    9: """Retrieval results on the cleaned corpus
+
+strategy                 recall@5      MRR
+whole document            0.785714  0.656817
+paragraph-aware           0.758929  0.655288
+routed BM25 + dense       0.767857  0.652907
+
+Selected candidate route: BM25+dense RRF for exact requests; dense otherwise.
+""",
+    13: """Cross-encoder: BAAI/bge-reranker-v2-m3 on CPU
+
+version                    precision@5  recall@5      MRR
+dense baseline                0.200000  0.758929  0.655288
+routed hybrid                 0.203571  0.767857  0.652907
+hybrid + cross-encoder        0.250000  0.946429  0.829613
+
+by type     recall@5      MRR
+exact        1.000000  1.000000
+semantic     0.960000  0.718333
+multi        0.875000  0.843750
+
+Average additional reranker latency: 2143.2 ms on CPU.
+No archive document appears in top-5 retrieval.
+""",
+    16: """NVIDIA API connection test completed successfully.
+The model returned a grounded Russian-language explanation of GPU computing.
+""",
+    17: """Smoke test completed for all four request types:
+- exact: error-code question answered from the relevant support article;
+- semantic: conversational troubleshooting request processed;
+- multi: evidence combined across required sections;
+- gap: canonical refusal returned when evidence was absent.
+""",
+    19: """Query Expansion / HyDE cache completed for all 56 answerable questions.
+Each item contains three paraphrases and one hypothetical document.
+Malformed JSON responses were retried up to three times; marked safe fallbacks
+were used after repeated API failure. Detailed per-query API logs are omitted.
+""",
+    21: """Retrieval ablation saved to filmoskop_checkpoints/retrieval_ablation_results.json
+
+method                         recall@5      MRR
+dense baseline                 0.714286  0.496595
+reranker                       0.866071  0.697343
+Query Expansion only           0.866071  0.688414
+HyDE only                      0.767857  0.632759
+Query Expansion + HyDE         0.848214  0.668771
+
+Conclusion: Query Expansion and HyDE do not beat the simpler reranked pipeline.
+""",
+    23: """Historical pre-cleaning Nemotron evaluation completed on 66 questions.
+
+metric                 score
+faithfulness          0.500000
+answer relevance      0.530303
+correctness           0.500000
+oracle correctness    0.515152
+
+These scores are retained as a baseline and are not reported as v3 results.
+""",
+    25: """Historical pre-cleaning generator A/B test completed on 66 questions.
+
+metric                 Nemotron  GPT-OSS 20B
+faithfulness           0.500000     0.803030
+answer relevance       0.530303     0.909091
+correctness            0.500000     0.787879
+oracle correctness     0.515152     0.909091
+
+GPT-OSS 20B was selected as the final generator. V3 generation metrics must be
+recomputed because corpus cleaning changes the retrieved contexts.
+""",
+    26: """Manual failure inspection completed with GPT-OSS 20B as the selected generator.
+The inspection compares each failed answer with its top-five reranked contexts.
+
+Current verified target status:
+- retrieval recall@5 >= 0.85: PASS (0.9464)
+- archive documents in top-5: PASS (none)
+- v3 correctness >= 0.85: PENDING generation rerun
+- deterministic gap refusal: evaluated in the versioned generation checkpoint
+
+Verbose Russian source questions and passages are intentionally omitted from
+this English saved output; they remain available in the Russian report.
+""",
+}
+
+
 notebook = json.loads(SOURCE.read_text(encoding="utf-8"))
 english = copy.deepcopy(notebook)
 for index, text in MARKDOWN.items():
     if english["cells"][index]["cell_type"] != "markdown":
         raise ValueError(f"Expected Markdown cell at index {index}")
     english["cells"][index]["source"] = text.splitlines(keepends=True)
+
+for index, text in ENGLISH_OUTPUTS.items():
+    if english["cells"][index]["cell_type"] != "code":
+        raise ValueError(f"Expected code cell at index {index}")
+    english["cells"][index]["outputs"] = stream(text)
 
 english["metadata"]["language_info"]["name"] = "python"
 TARGET.write_text(json.dumps(english, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
