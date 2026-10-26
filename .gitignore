@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+.ipynb_checkpoints/
+filmoskop_kb.json
+build_project_notebook.py
+filmoskop_checkpoints/*
+!filmoskop_checkpoints/retrieval_ablation_results.json
+!filmoskop_checkpoints/retrieval_v3_results.json
+
